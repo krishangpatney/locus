@@ -9,7 +9,7 @@ from geolib import geohash
 resolution = 8
 # Create your views here.
 
-# 127.0.0.1:8000/geocode/?lat=25.204849&long=55.270782
+# example -> /geocode/?lat=25.204849&long=55.270782
 @api_view(['GET'])
 def geocode(request):
     latitude = request.GET.get('lat', '')
