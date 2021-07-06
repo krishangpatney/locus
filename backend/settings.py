@@ -24,13 +24,17 @@ SECRET_KEY = "=bri5p4t7&y^ghax=2e9ys)-d7%4p*m#*_x67*xbu5o!9j!065"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['locus-prod-backend.herokuapp.com']
+ALLOWED_HOSTS = [
+    'locus-prod-backend.herokuapp.com',
+    '127.0.0.1',
+]
 
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'locus.apps.LocusConfig',
     'rest_framework',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [

@@ -12,10 +12,13 @@ resolution = 8
 # example -> /geocode/?lat=25.204849&long=55.270782
 @api_view(['GET'])
 def geocode(request):
-    latitude = request.GET.get('lat', '')
-    longitude = request.GET.get('long', '')
-    encoded_hash = geohash.encode(latitude, longitude, resolution)
-
+    if request.method == 'GET':
+        try:
+            latitude = request.GET.get('lat', '')
+            longitude = request.GET.get('long', '')
+            encoded_hash = geohash.encode(latitude, longitude, resolution)
+        except: 
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     # if not in db add in db ? 
-    return Response(encoded_hash)
+    return Response(str(encoded_hash), status=status.HTTP_200_OK)
