@@ -4,6 +4,7 @@ from locus import views
 
 urlpatterns = [
     path('geocode/', views.geocode),
+    path('tracks/', views.tracks)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
