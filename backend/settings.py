@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'locus.apps.LocusConfig',
     'rest_framework',
+    "rest_framework_api_key",
 ]
 
 MIDDLEWARE = [
