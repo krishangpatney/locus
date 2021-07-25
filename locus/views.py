@@ -21,7 +21,7 @@ resolution = 8
 
 # example -> /geocode/?lat=25.204849&long=55.270782
 @api_view(['GET'])
-def get_geocode(request):
+def geocode(request):
     """
     View to return the geocode of a user.
     """
