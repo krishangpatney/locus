@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from rest_framework import status
-from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -19,59 +18,38 @@ import json
 # Resolution default to use for geocoding
 resolution = 8
 # Create your views here.
-class Geocode(APIView):
 
-    # example -> /geocode/?lat=25.204849&long=55.270782
+# example -> /geocode/?lat=25.204849&long=55.270782
+@api_view(['GET'])
+def get_geocode(request):
+    """
+    View to return the geocode of a user.
+    """
+    try:
+        latitude = request.query_params.get('lat', '')
+        longitude = request.query_params.get('long', '')
+        encoded_hash = geohash.encode(latitude, longitude, resolution)
+    except: 
+        # no_response data  
+        return Response(None, status.HTTP_400_BAD_REQUEST)
 
-    @api_view(['GET'])
-    def get(self, request):
-        """
-        View to return the geocode of a user.
-
-        * Requires token authentication.
-        """
-        if request.method == 'GET':
-            try:
-                latitude = request.GET.get('lat', '')
-                longitude = request.GET.get('long', '')
-                encoded_hash = geohash.encode(latitude, longitude, resolution)
-            except: 
-                # no_response data  
-                no_response ={  
-                    "status" : "fail",
-                    "data" : { "response" : "Geohash error" }
-                }  
-
-                return JsonResponse(no_response, safe=False)
-
-        # response data  
-        response ={  
-            "status" : "success",
-            "data" : { "response" : encoded_hash }
-        }  
-
-        return JsonResponse(response, safe=False)
+    # response data  
+    return Response(encoded_hash, status.HTTP_200_OK)
 
 
 # example -> /tracks/?geocode=thrrgc7g
 @api_view(['GET'])
 def tracks(request):
     if request.method == 'GET':
-        geocode = request.GET.get('geocode', '')
+        geocode = request.query_params.get('geocode', '')
         # If hashcode exists it finds tracks to reply with
         if Geocode.objects.filter(hash_code=geocode).count()!=0:
             geocode_model = Geocode.objects.get(hash_code=geocode)
             linked_tracks = Track.objects.filter(geohash_link=geocode_model)
             serialized_track_list = TrackSerializer(linked_tracks, many=True)
-            return JsonResponse(serialized_track_list.data, safe=False)
-       
-    # no_response data  
-    no_response ={  
-        "status" : "fail",
-        "data" : { "response" : "No Tracks Found" }
-    }  
-        
-    return JsonResponse(no_response, safe=False)
+            return Response(serialized_track_list.data, status.HTTP_200_OK)
+               
+    return Response(None, status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

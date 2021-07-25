@@ -5,7 +5,7 @@ from rest_framework import routers
 
 
 urlpatterns = [
-    path('geocode/', views.Geocode.get),
+    path('geocode/', views.get_geocode),
     path('tracks/', views.tracks),
     path('addTrack/', views.add_track)
 ]
