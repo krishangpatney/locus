@@ -2,7 +2,9 @@ from django.shortcuts import render
 from rest_framework import status
 from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import authentication, permissions
 from django.core import serializers
 
 from geolib import geohash
@@ -17,32 +19,38 @@ import json
 # Resolution default to use for geocoding
 resolution = 8
 # Create your views here.
+class Geocode(APIView):
 
+    # example -> /geocode/?lat=25.204849&long=55.270782
 
-# example -> /geocode/?lat=25.204849&long=55.270782
-@api_view(['GET'])
-def geocode(request):
-    if request.method == 'GET':
-        try:
-            latitude = request.GET.get('lat', '')
-            longitude = request.GET.get('long', '')
-            encoded_hash = geohash.encode(latitude, longitude, resolution)
-        except: 
-            # no_response data  
-            no_response ={  
-                "status" : "fail",
-                "data" : { "response" : "Geohash error" }
-            }  
+    @api_view(['GET'])
+    def get(self, request):
+        """
+        View to return the geocode of a user.
 
-            return JsonResponse(no_response, safe=False)
+        * Requires token authentication.
+        """
+        if request.method == 'GET':
+            try:
+                latitude = request.GET.get('lat', '')
+                longitude = request.GET.get('long', '')
+                encoded_hash = geohash.encode(latitude, longitude, resolution)
+            except: 
+                # no_response data  
+                no_response ={  
+                    "status" : "fail",
+                    "data" : { "response" : "Geohash error" }
+                }  
 
-    # response data  
-    response ={  
-        "status" : "success",
-        "data" : { "response" : encoded_hash }
-    }  
+                return JsonResponse(no_response, safe=False)
 
-    return JsonResponse(response, safe=False)
+        # response data  
+        response ={  
+            "status" : "success",
+            "data" : { "response" : encoded_hash }
+        }  
+
+        return JsonResponse(response, safe=False)
 
 
 # example -> /tracks/?geocode=thrrgc7g
